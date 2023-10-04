@@ -17,13 +17,11 @@ const getPaniker = async (email) => {
 
 const postPaniker = async (body) => {
 
-  console.log("---->", body);
-
   const qry = `
     insert into paniker
-    (nickname, phone, email, coords)
+    (nickname, phone, email, coords, tokener)
     values
-    ('${body.nickname}', ${body.phone}, '${body.email}', point(${body.coords.latitude},${body.coords.longitude}))
+    ('${body.nickname}', ${body.phone}, '${body.email}', point(${body.coords.latitude},${body.coords.longitude}), '${body.tokener}')
     returning id
   `;
 
@@ -40,7 +38,7 @@ const postPaniker = async (body) => {
 const putPaniker = async (body) => {
   const qry = `
     update paniker
-    set nickname = '${body.nickname}', phone = ${body.phone}, coords = point(${body.coords.latitude},${body.coords.longitude})
+    set nickname = '${body.nickname}', phone = ${body.phone}, coords = point(${body.coords.latitude},${body.coords.longitude}), tokener = '${body.tokener}'
     where email = '${body.email}'
   `;
 
