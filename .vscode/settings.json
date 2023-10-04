@@ -1,0 +1,5 @@
+{
+  "appService.zipIgnorePattern": ["node_modules{,/**}", ".vscode{,/**}"],
+  "appService.defaultWebAppToDeploy": "/subscriptions/2abb2848-21df-44ef-9f9f-93b29889474b/resourceGroups/dummy/providers/Microsoft.Web/sites/paniker",
+  "appService.deploySubpath": "."
+}
