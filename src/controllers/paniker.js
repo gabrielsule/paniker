@@ -24,7 +24,6 @@ router.post("/paniker", async (req, res) => {
             res.status(200).json(result);
         })
         .catch((error) => {
-            console.clear();
             console.error(error);
             res.status(500).json({ message: "error inserando datos" });
         });

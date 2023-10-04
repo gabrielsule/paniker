@@ -16,6 +16,9 @@ const getPaniker = async (email) => {
 };
 
 const postPaniker = async (body) => {
+
+  console.log("---->", body);
+
   const qry = `
     insert into paniker
     (nickname, phone, email, coords)
