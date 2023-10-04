@@ -1,10 +1,27 @@
 const express = require("express");
-const app = express(); // Initializing Express App
+const cors = require("cors");
 
-// Sending Hello World when anyone browse your webpage
+const app = express();
+const port = process.env.API_PORT || 8080;
 
-app.get("/*", (req, res) => {
-    res.send('Hello World');
+const panikerRouter = require("./controllers/paniker");
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('./swagger_output.json');
+
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+}));
+
+app.use(express.json());
+app.use("/api", panikerRouter);
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
+app.get("/", (req, res) => {
+    res.send("welcome to the jungle");
 });
 
-app.listen(8080, () => console.log("App Listening on port 8080"));
+app.listen(port, () => {
+    console.info(`server ok http://localhost:${port}`);
+});

@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/paniker/:email", async (req, res) => {
     const email = req.params.email;
 
-    res.status(200);//.json({ email });
+    res.status(200).json({ email });
 
     // await panikerController.getPaniker(email)
     //     .then((result) => {
