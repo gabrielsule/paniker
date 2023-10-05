@@ -16,12 +16,11 @@ const getPaniker = async (email) => {
 };
 
 const postPaniker = async (body) => {
-
   const qry = `
     insert into paniker
     (nickname, phone, email, coords, tokener)
     values
-    ('${body.nickname}', ${body.phone}, '${body.email}', point(${body.coords.latitude},${body.coords.longitude}), '${body.tokener}')
+    ('${body.nickname}', ${body.phone}, '${body.email}', point(${body.latitude},${body.longitude}), '${body.tokener}')
     returning id
   `;
 
@@ -38,8 +37,9 @@ const postPaniker = async (body) => {
 const putPaniker = async (body) => {
   const qry = `
     update paniker
-    set nickname = '${body.nickname}', phone = ${body.phone}, coords = point(${body.coords.latitude},${body.coords.longitude}), tokener = '${body.tokener}'
+    set nickname = '${body.nickname}', phone = ${body.phone}, coords = point(${body.latitude},${body.longitude}), tokener = '${body.tokener}'
     where email = '${body.email}'
+    returning id
   `;
 
   const res = await pool.query(qry)
