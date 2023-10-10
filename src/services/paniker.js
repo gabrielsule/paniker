@@ -15,44 +15,54 @@ const getPaniker = async (email) => {
   }
 };
 
-const postPaniker = async (body) => {
+const upsertPaniker = async (body) => {
+
   const qry = `
-    insert into paniker
-    (nickname, phone, email, coords, tokener)
-    values
-    ('${body.nickname}', ${body.phone}, '${body.email}', point(${body.latitude},${body.longitude}), '${body.tokener}')
-    returning id
+    INSERT INTO public.panikers
+    (username, phone, email, coords, tokener)
+    VALUES ('${body.username}', ${body.phone}, '${body.email}', point(${body.latitude},${body.longitude}), '${body.tokener}')
+    ON CONFLICT (phone)
+    DO UPDATE
+    SET username=EXCLUDED.username, email=EXCLUDED.email, phone=EXCLUDED.phone, tokener=EXCLUDED.tokener, coords=EXCLUDED.coords
+    returning id;
   `;
 
-  const res = await pool.query(qry)
-  if (!res?.rows[0]) {
-    return [];
-  }
-  else {
-    return res.rows[0];
+  const res = await pool.query(qry);
+
+  if (res.rows.length !== 0) {
+    if (body.masterId !== 0) {
+      const data = await fillCloseCircle(body.masterId, res.rows[0].id);
+
+      if (data) {
+        return res.rows[0].id
+      } else {
+        throw new Error("error insertando datos");
+      }
+    }
   }
 };
 
-
-const putPaniker = async (body) => {
+const fillCloseCircle = async (masterId, contactId) => {
   const qry = `
-    update paniker
-    set nickname = '${body.nickname}', phone = ${body.phone}, coords = point(${body.latitude},${body.longitude}), tokener = '${body.tokener}'
-    where email = '${body.email}'
-    returning id
-  `;
+    INSERT INTO public.close_circle
+    (paniker_id, contact_id)
+    VALUES(${masterId}, ${contactId})
+    ON CONFLICT (paniker_id, contact_id)
+    DO NOTHING;`;
 
-  const res = await pool.query(qry)
-  if (!res?.rows[0]) {
-    return [];
-  }
-  else {
-    return res.rows[0];
-  }
+  console.log(qry);
+
+  return await pool.query(qry)
+    .then((res) => {
+      return true;
+    })
+    .catch((error) => {
+      return false;
+    });
 };
+
 
 module.exports = {
   getPaniker: getPaniker,
-  postPaniker: postPaniker,
-  putPaniker: putPaniker
+  upsertPaniker: upsertPaniker,
 }
