@@ -16,7 +16,6 @@ const getPaniker = async (email) => {
 };
 
 const upsertPaniker = async (body) => {
-
   const qry = `
     INSERT INTO public.panikers
     (username, phone, email, coords, tokener)
@@ -24,7 +23,7 @@ const upsertPaniker = async (body) => {
     ON CONFLICT (phone)
     DO UPDATE
     SET username=EXCLUDED.username, email=EXCLUDED.email, phone=EXCLUDED.phone, tokener=EXCLUDED.tokener, coords=EXCLUDED.coords
-    returning id;
+    returning id, phone;
   `;
 
   const res = await pool.query(qry);
@@ -34,10 +33,12 @@ const upsertPaniker = async (body) => {
       const data = await fillCloseCircle(body.masterId, res.rows[0].id);
 
       if (data) {
-        return res.rows[0].id
+        return res.rows[0];
       } else {
         throw new Error("error insertando datos");
       }
+    } else {
+      return res.rows[0];
     }
   }
 };
@@ -60,7 +61,6 @@ const fillCloseCircle = async (masterId, contactId) => {
       return false;
     });
 };
-
 
 module.exports = {
   getPaniker: getPaniker,
